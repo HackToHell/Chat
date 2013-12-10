@@ -48,6 +48,7 @@ public class Main {
         Timestamp sd = new Timestamp(cal1.getMillis());
         db mysql = new db();
         int hour,minute;
+        Main a5 = new Main();
 
 
         String html,message,shit,times;
@@ -57,8 +58,41 @@ public class Main {
         do{
        
             org.jsoup.nodes.Document doc = Jsoup.connect("http://chat.stackexchange.com/transcript/118/"+cal1.getYear()+"/"+cal1.getMonthOfYear()+"/"+cal1.getDayOfMonth()).userAgent("Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)").get();
+Element transcript = doc.select(".pager").first();
+
+      
+        
+            if( b.attr(".pager").substring(1, 10).equals("transcript") ){
+                a5.getdata("http://chat.stackexchange.com"+b.attr("href"),sd,cal1);
+            }
+            cal1 = cal1.plusDays(1);
+
+
+        } while (1 > 0);
+
+
+
+
+
+       
+          
+    
+    }
+        
+
+    
+
+    void getdata(String url,Timestamp sd,DateTime cal1 )throws java.io.IOException{
+        int g,uid = 0;
+        int hour,minute;
+        String html,message,shit,times;
+        Document go;
+        db mysql = new db();
+        org.jsoup.nodes.Document doc = Jsoup.connect(url).get();
 
         Elements messages = doc.select(".monologue");
+
+
         for( Element a : messages){
             go = Jsoup.parse(a.html());
             message=(go.select(".content").html());
@@ -69,8 +103,9 @@ public class Main {
            s.useDelimiter("/");
            if(s.hasNextInt())
            uid=s.nextInt();
-           
+
             }
+
             else{
                 uid=0;
             }
@@ -79,7 +114,7 @@ public class Main {
            times= times.length()== 8? times: "0"+ times;
            System.err.println(times);
            if(  times.equals("0") ? times == null :times.substring(4).equals("AM") ){
-              
+
                hour =Integer.parseInt (times.substring(0,1));
                minute = Integer.parseInt(times.substring(3,5));
            }else
@@ -88,27 +123,17 @@ public class Main {
                  hour =(Integer.parseInt(times.substring(0,1)))+12;
                minute = Integer.parseInt(times.substring(3,5));
            }
-           
+
            sd.setTime((cal1.withTime(hour,minute,0,0)).getMillis());
                 try {
                     db.pushdata(uid, message, sd);
                 } catch (Exception ex) {
                     Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                 }
-        }
-        cal1 = cal1.plusDays(1);
-        
-        }
-        while(1>0);
 
 
 
-       
-          
-    
-
-        
-
+    }
     }
     
 
